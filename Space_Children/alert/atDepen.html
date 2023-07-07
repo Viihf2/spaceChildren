@@ -1,0 +1,88 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Atualizar Dados do Usuário</title>
+    <style>
+      .header-inner {
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body bgcolor="#faf8f7">
+    <div class="header-inner section inner">
+      <img src="/space/img/Space Children.png" width="100px" alt="logo">
+    </div>
+    <?php
+      session_start();
+
+      if (!isset($_SESSION["email"])) {
+        // Se o usuário não estiver logado, redirecioná-lo para a página de login
+        header("Location: /login/logar.php");
+        exit();
+      }
+
+      // Captura o email logado em uma variável
+      $conn = mysqli_connect("sql306.epizy.com", "epiz_32954395", "Gw0vaOuUa5", "epiz_32954395_space");
+      $login = $_SESSION['email'];
+
+      // Consulta SQL para buscar os dados do dependente do usuário logado
+      $email = $_POST['emailDep'];
+      $query_depen = "SELECT nomeDep, emailDep, senhaDep, nascDep FROM dep WHERE email_resp = '$login' AND emailDep = '$email'";
+      $result_depen = mysqli_query($conn, $query_depen);
+      $row = mysqli_fetch_assoc($result_depen);
+      $nomeDep = $row['nomeDep'];
+      $emailDep = $row['emailDep'];
+      $senhaDep = $row['senhaDep'];
+      $nascDep = $row['nascDep'];
+    ?>
+    <center>
+      <div style="background-color: #faf8f7">
+        <font face="arial" color="#000000" size="03"></font>
+        <form name="dados" method="post" action="updateDep.php">
+          <fieldset>
+            <legend>Atualizar</legend>
+            <table>
+              <tr>
+                <td>Nome Atual:</td>
+                <td><?php echo $nomeDep ?></td>
+              </tr>
+              <tr>
+                <td>Email Atual:</td>
+                <td><?php echo $emailDep ?></td>
+              </tr>
+              <tr>
+                <td>Data de Nascimento Atual:</td>
+                <td><?php echo $nascDep ?></td>
+              </tr>
+              <tr>
+                <td>Senha Atual:</td>
+                <td><?php echo $senhaDep ?></td>
+              </tr>
+              <tr>
+                <td>Novo nome:</td>
+                <td><input type="text" size="30" name="nome" autocomplete="off" required value="<?php echo $nomeDep; ?>"></td>
+              </tr>
+              <tr>
+                <td>Novo email:</td>
+                <td><input type="text" size="30" name="email" autocomplete="off" required value="<?php echo $emailDep; ?>"></td>
+              </tr>
+              <tr>
+                <td>Nova data de nascimento:</td>
+                <td><input type="date" size="10" name="datanasc" autocomplete="off" required value="<?php echo $nascDep; ?>"></td>
+              </tr>
+              <tr>
+                <td>Nova senha:</td>
+                <td><input type="password" size="30" name="senha" autocomplete="off" required></td>
+              </tr>
+            </table>
+          </fieldset>
+          <br>
+          <input type="submit" name="BTAtual" value="Atualizar">
+        </form>
+        <form name="back" action="/perfilPai/dashboard.php">
+          <input type="submit" name="BTVolta" value="Voltar">
+        </form>
+      </div>
+    </center>
+  </body>
+</html>

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<!--
+/ Jogo da força
+/ file: ./index.html
+/ description: arquivo que contém todo html do jogo, incluindo o css
+/ date: março/2021
+/ author: Nei Thomassin Dutra
+/ git: https://gitlab.com/neithomass/hangman_game
+-->
+<html lang="pt-br">
+    <head>
+        <title>Jogo da forca</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="cache-control" content="no-cache" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="jogoForca.js"></script>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div id="game_over" class="text-center">
+                <h1 class="text-danger mb-5" id="title-final"></h1>
+                <button class="btn btn-success" type="button" onclick="exitGame();">Jogar novamente</button>
+                <button class="btn btn-primary" type="button" onclick="exitGame();">Sair do jogo</button>
+            </div>
+            <div class="row">
+                <div class="col col-sm-12 topo pb-3 text-center text-white">
+                    <h1>Jogo da forca</h1>
+                    <div class="input_palavra" id="palavra">
+                        <p class="seta">Digite a palavra do jogo ou deixe o sistema escolher</p>
+                        <input type="text" name="palavra" id="in_word" required autofocus/>
+                        <button class="btn btn-primary" type="button" onclick="criaCaixaDeLetra('yes');" onMouseUp="this.blur();">Escolher</button>
+                        <button class="btn btn-primary" type="button" onclick="random();" onMouseUp="this.blur();">Deixe o sistema escolher</button>
+                    </div>
+                    <div id="input_dica_i">
+                        <p class="seta">Digite uma dica (1/3)</p>
+                        <input type="text" name="dica_i" id="dica_i" required autofocus/>
+                        <button class="btn btn-primary" type="button" onclick="guardaDica('dica_i');" onMouseUp="this.blur();">Próximo</button>
+                    </div>
+                    <div id="input_dica_ii">
+                        <p class="seta">Digite uma dica (2/3)</p>
+                        <input type="text" name="dica_ii" id="dica_ii" required autofocus/>
+                        <button class="btn btn-primary" type="button" onclick="guardaDica('dica_ii');" onMouseUp="this.blur();">Próximo</button>
+                    </div>
+                    <div id="input_dica_iii">
+                        <p class="seta">Digite uma dica (3/3)</p>
+                        <input type="text" name="dica_iii" id="dica_iii" required autofocus/>
+                        <button class="btn btn-primary" type="button" onclick="guardaDica('dica_iii');" onMouseUp="this.blur();">Próximo</button>
+                    </div>
+                    <div class="input_letra" id="letra">
+                        <p class="seta">Digite uma letra</p>
+                        <input type="text" name="letra" id="in_letter" required autofocus/>
+                        <button class="btn btn-primary" type="button" onclick="testaLetra();" onMouseUp="this.blur();">Jogar</button>
+                    </div>
+                </div>
+                <div class="col col-sm-5 forca pt-3 text-center">
+                    <h2 class="p-2 text-danger slide">Forca</h2>
+                    <div id="forca1" class="boneco"></div>
+                    <div id="forca2" class="boneco"></div>
+                    <div id="forca3" class="boneco"></div>
+                    <div id="forca4" class="boneco"></div>
+                    <div id="forca5" class="boneco"></div>
+                    <div id="forca6" class="boneco text-white">
+                        <p class="ml-1 mb-0">OO</p>
+                        <p class="mt-0">--</p>
+                    </div>
+                    <div id="forca7" class="boneco"></div>
+                </div>
+                <div class="col col-sm-7 tabuleiro pt-3">
+                    <h2 class="p-2 text-danger slide">Acerte as letras</h2>
+                    <div id="div_word"></div>
+                    <div id="dica" class="">
+                        <h3 class="ml-3 text-danger">Dicas</h3>
+                    </div>
+                </div>
+                <div class="col col-sm-12 l_digitada justify-content-center align-items-center text-center mt-3">
+                    <h3>Letras que já foram digitadas:</h3>
+                    <div id="l_digitada" class="text-center justify-content-center align-items-center ">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <style>
+        body {
+            background-image: linear-gradient(black, white);
+        }
+        #game_over {
+            display: none;
+            position: fixed;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: 100;
+            background-image: url(./fundoTransparente.png);
+        }
+        #game_over h1 {
+            margin-top: 20%;
+            background: black;
+        }
+        @keyframes warn {
+            from {
+                background-color: red;
+                box-shadow: 10px 12px 12px 10px yellow;
+            }
+            to {
+                background-color: black;
+            }
+        }
+        .animate {
+            animation-delay: 0.5s;
+            animation-name: warn;
+            animation-duration: 1s;
+            animation-iteration-count: infinite;
+        }
+        .topo {
+            min-height: 20vh;
+        }
+        .forca, .tabuleiro {
+            height: 60vh;
+            background-image: url(./arvore.png);
+        }
+        .tabuleiro h2 {
+            margin-left: 2%;
+        }
+        @keyframes sld {
+            0% {
+                margin-left: 150%;
+                opacity: 0;
+            }
+            100% {
+                margin-left: 2%;
+                opacity: 1;
+            }
+        }
+        .slide {
+            animation-name: sld;
+            animation-duration: 5s;
+            animation-iteration-count: 1;
+            text-shadow: 2px 1px yellow;
+        }
+        .inidica {
+            animation-name: sld;
+            animation-duration: 5s;
+            animation-iteration-count: 1;
+            margin-left: 2%;
+        }
+        .letter {
+            position: relative;
+            float: left;
+            margin-left: 2%;
+            width: 5%;
+            height: 5vh;
+            background-color: white;
+        }
+        .input_letra {
+            display: none;
+        }
+        #input_dica_i, #input_dica_ii, #input_dica_iii {
+            display: none;
+        }
+        @keyframes atencao {
+            from {
+                font-size: 1.5rem;
+                color: red;
+            }
+            to {
+                margin-right: 0;
+                font-size: 1.5rem;
+                color: orange;
+            }
+        }
+        .seta {
+            animation-name: atencao;
+            animation-duration: 1s;
+            animation-iteration-count: infinite;
+        }
+        .l_digitada {
+            height: 20vh;
+            width: 99%;
+        }
+        #dica_i, #dica_ii, #dica_iii {
+            padding: 8px;
+            width: 450px;
+        }
+        #div_word {
+            position: relative;
+            width: 100%;
+        }
+        #dica {
+            position: relative;
+            max-height: 50%;
+            overflow: hidden;
+            width: 100%;
+            background-color: gray;
+            margin-top: 8%;
+            padding: 20px 0 20px 20px;
+            font-weight: 900;
+            font-size: 1.3rem;
+            display: none;
+        }
+        #in_word {
+            padding: 8px;
+        }
+        #in_letter {
+            padding: 8px;
+            width: 70px;
+        }
+        #l_digitada {
+            width: 100%;
+        }
+        .boneco {
+            position: absolute;
+            background-color: black;
+            z-index: 10;
+        }
+        #forca1 {
+            width: 15px;
+            height: 60px;
+            margin-top: 250px;
+            margin-left: 250px;
+            display: none;
+            border-radius: 50% 0 35% 35%;
+        }
+        #forca2 {
+            width: 15px;
+            height: 60px;
+            margin-top: 250px;
+            margin-left: 275px;
+            display: none;
+            border-radius: 0 50% 35% 35%;
+        }
+        #forca3 {
+            width: 15px;
+            height: 50px;
+            margin-top: 200px;
+            margin-left: 260px;
+            display: none;
+        }
+        #forca4 {
+            width: 50px;
+            height: 15px;
+            margin-top: 200px;
+            margin-left: 275px;
+            display: none;
+            border-radius: 35% 50% 35% 0;
+        }
+        #forca5 {
+            width: 50px;
+            height: 15px;
+            margin-top: 200px;
+            margin-left: 215px;
+            display: none;
+            border-radius: 35% 50% 0 35%;
+        }
+        #forca6 {
+            width: 50px;
+            height: 50px;
+            margin-top: 150px;
+            margin-left: 255px;
+            border-radius: 70% 50% 70% 50%;
+            display: none;
+        }
+        #forca7 {
+            width: 15px;
+            height: 110px;
+            margin-top: 50px;
+            margin-left: 260px;
+            display: none;
+            border-radius: 0 0 35% 35%;
+        }
+    </style>
+</html>

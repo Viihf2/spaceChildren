@@ -1,0 +1,70 @@
+<html>
+
+<style>
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      position: relative;
+      background: linear-gradient(to left, #004aad, #5de0e6);
+    }
+
+  /* Estilos para o pop-up */
+  #myDialog {
+    width: 400px;
+    background-image: linear-gradient(to left, #5ce1e6, #8c52ff);
+    border: 2px solid #5ce1e6;
+    border-radius: 40px;
+    padding: 20px;
+    color: white;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+  }
+
+  #myDialog h2 {
+    margin-top: 0;
+    text-align: center;
+  }
+
+    #myDialog p {
+     margin-top: 0;
+     text-align: center;
+    }
+
+  #closeDialog {
+    background-color: #02fefe;
+    border: 2px solid #d9d9d9;
+    border-radius: 50px;
+    color: #020303;
+    font-size: 13px;
+    cursor: pointer;
+    align-items: right;
+  }
+
+</style>
+
+<body>
+
+<dialog id="myDialog">
+  <h2>Sucesso</h2>
+  <p>Cadastro realizado com sucesso</p>
+  <button id="closeDialog">Fechar</button>
+</dialog>
+
+</body>
+</html>
+
+<script>
+  var dialog = document.getElementById('myDialog');
+  var closeButton = document.getElementById('closeDialog');
+
+  dialog.showModal();
+
+  closeButton.addEventListener('click', function() {
+    dialog.close();
+    window.location.href = '/perfilPai/dashboard.php';
+
+  });
+</script>
